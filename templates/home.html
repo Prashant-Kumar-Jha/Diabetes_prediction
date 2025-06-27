@@ -1,0 +1,74 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home</title>
+    <style>
+        body {
+             background: linear-gradient(to right, #004e92, #000428);
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+        }
+
+        div {
+            color: white;
+            text-align: center;
+        }
+
+        h1 {
+            color: white;
+            font-family: Arial, sans-serif;
+            font-size: 60px;
+            font-weight: bold;
+            margin-top: 200px;
+        }
+
+        h2 {
+            color: white;
+            font-family: Arial, sans-serif;
+            font-size: 15px;
+            font-weight: bold;
+            margin-top: 400px;
+        }
+
+        input[type=submit] {
+            background-color: #4dc3ff;
+            border: none;
+            color: white;
+            padding: 16px 32px;
+            cursor: pointer;
+            margin-top: 15px;
+            font-size: 18px;
+        }
+
+        .admin-btn {
+            margin-top: 30px;
+        }
+
+        .admin-btn a {
+            background-color: #ffcc00;
+            color: #000;
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>WELCOME TO DIABETES PREDICTION SYSTEM</h1>
+        <form action="/predict">
+            <input type="submit" value="Let's get started">
+        </form>
+
+        {% if request.user.is_staff or request.user.is_superuser %}
+        <div class="admin-btn">
+            <a href="{% url 'admin_portal' %}">🛠 Admin Portal</a>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

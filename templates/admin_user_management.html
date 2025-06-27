@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Management - Admin Portal</title>
+    <style>
+        body {
+            background: linear-gradient(to right, #004e92, #000428);
+            font-family: Arial, sans-serif;
+            color: white;
+            padding: 20px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        table {
+            width: 80%;
+            margin: 0 auto;
+            border-collapse: collapse;
+            background-color: rgba(255,255,255,0.05);
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+        th {
+            background-color: rgba(255,255,255,0.15);
+        }
+        form {
+            margin: 0;
+        }
+        .btn-delete {
+            background-color: #f44336;
+            border: none;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h2>User Management</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Is Staff</th>
+                <th>Is Superuser</th>
+                <th>Date Joined</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for user in users %}
+            <tr>
+                <td>{{ user.username }}</td>
+                <td>{{ user.is_staff }}</td>
+                <td>{{ user.is_superuser }}</td>
+                <td>{{ user.date_joined }}</td>
+                <td>
+                    {% if not user.is_superuser %}
+                    <form method="post" action="{% url 'delete_user' user.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-delete">Delete</button>
+                    </form>
+                    {% else %}
+                    <span style="color: gray;">Protected</span>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

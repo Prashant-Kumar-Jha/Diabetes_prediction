@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Portal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #0f2027;
+            background: linear-gradient(to right, #2c5364, #203a43, #0f2027);
+            color: white;
+            padding: 30px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+        }
+        .stat-box {
+            background-color: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            flex: 1;
+            margin: 0 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: rgba(255,255,255,0.05);
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid rgba(255,255,255,0.2);
+            text-align: center;
+        }
+        th {
+            background-color: rgba(255,255,255,0.1);
+            color: #ffcc00;
+        }
+        a.button {
+            background: #ffcc00;
+            color: #000;
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h2>🔒 Admin Portal</h2>
+    <div style="text-align: center;">
+        <a href="{% url 'home' %}" class="button">⬅️ Back to Home</a>
+    </div>
+
+    <!-- ✅ NEW USER MANAGEMENT BUTTON BELOW -->
+    <div style="text-align: center;">
+        <a href="{% url 'admin_user_management' %}" class="button">👥 Admin User Management</a>
+    </div>
+
+    <div class="stats">
+        <div class="stat-box">
+            <h3>Total Users</h3>
+            <p>{{ total_users }}</p>
+        </div>
+        <div class="stat-box">
+            <h3>Total Predictions</h3>
+            <p>{{ total_predictions }}</p>
+        </div>
+        <div class="stat-box">
+            <h3>Diabetic Results</h3>
+            <p>{{ diabetic_count }}</p>
+        </div>
+        <div class="stat-box">
+            <h3>Not Diabetic Results</h3>
+            <p>{{ non_diabetic_count }}</p>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Patient Name</th>
+                <th>Patient ID</th>
+                <th>Glucose</th>
+                <th>Blood Pressure</th>
+                <th>BMI</th>
+                <th>Age</th>
+                <th>Result</th>
+                <th>Time</th>
+                <th>Feedback</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for record in all_records %}
+            <tr>
+                <td>{{ record.user.username }}</td>
+                <td>{{ record.patient_name }}</td>
+                <td>{{ record.patient_id }}</td>
+                <td>{{ record.glucose }}</td>
+                <td>{{ record.bloodpressure }}</td>
+                <td>{{ record.bmi }}</td>
+                <td>{{ record.age }}</td>
+                <td>{{ record.result }}</td>
+                <td>{{ record.timestamp }}</td>
+                <td>{{ record.feedback }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

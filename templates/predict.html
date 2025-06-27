@@ -1,0 +1,116 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Diabetes Prediction</title>
+    <style>
+        body {
+            background: linear-gradient(to right, #004e92, #000428);
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 60px auto;
+            padding: 30px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            color: #ffffff;
+            text-align: center;
+            font-size: 40px;
+            margin-bottom: 30px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="submit"] {
+            width: 90%;
+            max-width: 400px;
+            height: 45px;
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"] {
+            background-color: #4dc3ff;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #38a4d6;
+        }
+
+        .result {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 22px;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .history-button {
+            margin-top: 20px;
+        }
+
+        .history-button input[type="submit"] {
+            background-color: #ffffff;
+            color: #004e92;
+            border: 2px solid #4dc3ff;
+        }
+
+        .history-button input[type="submit"]:hover {
+            background-color: #e0f4ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Diabetes Prediction</h1>
+
+        <form method="post">
+            {% csrf_token %}
+            <input type="text" name="patient_name" placeholder="Patient Name" required>
+            <input type="text" name="patient_id" placeholder="Patient ID (optional)">
+            <input type="number" step="any" name="pregnancies" placeholder="Pregnancies" required>
+            <input type="number" step="any" name="glucose" placeholder="Glucose Level" required>
+            <input type="number" step="any" name="bloodpressure" placeholder="Blood Pressure" required>
+            <input type="number" step="any" name="skinthickness" placeholder="Skin Thickness" required>
+            <input type="number" step="any" name="insulin" placeholder="Insulin" required>
+            <input type="number" step="any" name="bmi" placeholder="BMI" required>
+            <input type="number" step="any" name="dpf" placeholder="Diabetes Pedigree Function" required>
+            <input type="number" step="any" name="age" placeholder="Age" required>
+            <input type="submit" value="Predict">
+        </form>
+
+        {% if result %}
+            <div class="result">Result: {{ result }}</div>
+        {% endif %}
+
+        <form action="/history/" class="history-button">
+            <input type="submit" value="View Prediction History">
+        </form>
+    </div>
+</body>
+</html>
