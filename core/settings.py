@@ -8,9 +8,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'your-secret-key'
 
 DEBUG = True
-ALLOWED_HOSTS = []
 
-# ✅ Installed apps including your app
+# ✅ ALLOWED_HOSTS for Render or production
+ALLOWED_HOSTS = ['diabetes-prediction-tr8y.onrender.com', 'localhost', '127.0.0.1']
+
+# ✅ Installed apps
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -18,7 +20,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'main',  # Your app
+    'main',
 ]
 
 # ✅ Middleware
@@ -32,28 +34,29 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# ✅ URLs and templates
-ROOT_URLCONF = 'Diabetes_prediction.urls'
+# ✅ Updated URL config path
+ROOT_URLCONF = 'core.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],  # Custom templates folder
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
-                'django.template.context_processors.request',  # Required for `user` in templates
-                'django.contrib.auth.context_processors.auth',  # Required to use {{ user }}
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'Diabetes_prediction.wsgi.application'
+# ✅ Updated WSGI path
+WSGI_APPLICATION = 'core.wsgi.application'
 
-# ✅ SQLite database
+# ✅ Database
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -61,21 +64,22 @@ DATABASES = {
     }
 }
 
-# ✅ Optional: Disable password strength checks for testing
+# ✅ Password validators (none for now)
 AUTH_PASSWORD_VALIDATORS = []
 
-# ✅ Internationalization & Time
+# ✅ Language and time zone
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'Asia/Kolkata'  # Your local time zone
+TIME_ZONE = 'Asia/Kolkata'
 USE_I18N = True
 USE_TZ = True
 
-# ✅ Static files
+# ✅ Static files config
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
+# ✅ Primary key type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# ✅ Redirect unauthenticated users to this login page
+# ✅ Login redirect
 LOGIN_URL = '/login/'
