@@ -4,12 +4,13 @@ from pathlib import Path
 # ✅ Base directory
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# ✅ SECURITY WARNING: keep this key secret in production
+# ✅ Secret key for development (keep it secret in production)
 SECRET_KEY = 'your-secret-key'
 
+# ✅ Debug mode
 DEBUG = True
 
-# ✅ ALLOWED_HOSTS for Render or production
+# ✅ Hosts allowed to serve the project
 ALLOWED_HOSTS = ['diabetes-prediction-tr8y.onrender.com', 'localhost', '127.0.0.1']
 
 # ✅ Installed apps
@@ -20,7 +21,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'main',
+    'main',  # your app
 ]
 
 # ✅ Middleware
@@ -34,13 +35,14 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# ✅ Updated URL config path
+# ✅ URL configuration
 ROOT_URLCONF = 'core.urls'
 
+# ✅ Templates
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],  # Custom template directory
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -53,10 +55,10 @@ TEMPLATES = [
     },
 ]
 
-# ✅ Updated WSGI path
+# ✅ WSGI application path
 WSGI_APPLICATION = 'core.wsgi.application'
 
-# ✅ Database
+# ✅ Database configuration (SQLite for dev)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -64,22 +66,22 @@ DATABASES = {
     }
 }
 
-# ✅ Password validators (none for now)
+# ✅ Password validation (empty for development)
 AUTH_PASSWORD_VALIDATORS = []
 
-# ✅ Language and time zone
+# ✅ Localization
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'Asia/Kolkata'
 USE_I18N = True
 USE_TZ = True
 
-# ✅ Static files config
+# ✅ Static files settings
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# ✅ Primary key type
+# ✅ Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# ✅ Login redirect
+# ✅ Login redirect settings
 LOGIN_URL = '/login/'

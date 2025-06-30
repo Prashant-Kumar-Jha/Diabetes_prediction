@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 from main import views
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -16,5 +17,6 @@ urlpatterns = [
     path('admin-portal/', views.admin_portal, name='admin_portal'),
     path('adminportal/users/', views.admin_user_management, name='admin_user_management'),
     path('adminportal/delete_user/<int:user_id>/', views.delete_user, name='delete_user'),
+    path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
 ]
 

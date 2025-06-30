@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>History - Diabetes Predictor</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- ✅ Mobile support -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
@@ -12,6 +13,7 @@
             margin: 0;
             padding: 0;
         }
+
         .container {
             max-width: 1200px;
             margin: 50px auto;
@@ -20,11 +22,13 @@
             border-radius: 15px;
             box-shadow: 0 0 20px rgba(0,0,0,0.4);
         }
+
         h2 {
             text-align: center;
             color: #ffffff;
             margin-bottom: 30px;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -32,29 +36,35 @@
             border-radius: 10px;
             overflow: hidden;
         }
+
         th, td {
             padding: 12px 15px;
             border-bottom: 1px solid rgba(255,255,255,0.2);
             text-align: center;
         }
+
         th {
             background-color: rgba(255,255,255,0.15);
             color: #ffdd57;
         }
+
         .charts-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 20px;
             margin-bottom: 40px;
         }
+
         .chart-box {
             background-color: rgba(255,255,255,0.1);
             padding: 20px;
             border-radius: 12px;
         }
+
         canvas {
             background: transparent;
         }
+
         .feedback-btn {
             padding: 5px 10px;
             border: none;
@@ -62,13 +72,55 @@
             cursor: pointer;
             font-size: 14px;
         }
+
         .feedback-correct {
             background-color: #4CAF50;
             color: white;
         }
+
         .feedback-incorrect {
             background-color: #f44336;
             color: white;
+        }
+
+        @media (max-width: 768px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            table, thead, tbody, th, td, tr {
+                display: block;
+                width: 100%;
+            }
+
+            thead {
+                display: none;
+            }
+
+            tr {
+                margin-bottom: 15px;
+                border-bottom: 2px solid rgba(255,255,255,0.3);
+                padding: 10px 0;
+            }
+
+            td {
+                text-align: right;
+                padding-left: 50%;
+                position: relative;
+                border: none;
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+            }
+
+            td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 15px;
+                width: 45%;
+                padding-right: 10px;
+                font-weight: bold;
+                text-align: left;
+                color: #ffdd57;
+            }
         }
     </style>
 </head>
@@ -76,7 +128,6 @@
 <div class="container">
     <h2>Prediction History</h2>
 
-    <!-- ✅ Back to Home Button -->
     <div style="text-align: center; margin-bottom: 20px;">
         <a href="{% url 'home' %}" style="
             background-color: #ffdd57;
@@ -132,19 +183,19 @@
         <tbody>
         {% for record in records %}
             <tr>
-                <td>{{ record.patient_name }}</td>
-                <td>{{ record.patient_id }}</td>
-                <td>{{ record.pregnancies }}</td>
-                <td>{{ record.glucose }}</td>
-                <td>{{ record.bloodpressure }}</td>
-                <td>{{ record.skinthickness }}</td>
-                <td>{{ record.insulin }}</td>
-                <td>{{ record.bmi }}</td>
-                <td>{{ record.dpf }}</td>
-                <td>{{ record.age }}</td>
-                <td>{{ record.result }}</td>
-                <td>{{ record.timestamp }}</td>
-                <td>
+                <td data-label="Patient Name">{{ record.patient_name }}</td>
+                <td data-label="Patient ID">{{ record.patient_id }}</td>
+                <td data-label="Pregnancies">{{ record.pregnancies }}</td>
+                <td data-label="Glucose">{{ record.glucose }}</td>
+                <td data-label="Blood Pressure">{{ record.bloodpressure }}</td>
+                <td data-label="Skin Thickness">{{ record.skinthickness }}</td>
+                <td data-label="Insulin">{{ record.insulin }}</td>
+                <td data-label="BMI">{{ record.bmi }}</td>
+                <td data-label="DPF">{{ record.dpf }}</td>
+                <td data-label="Age">{{ record.age }}</td>
+                <td data-label="Result">{{ record.result }}</td>
+                <td data-label="Time">{{ record.timestamp }}</td>
+                <td data-label="Feedback">
                     {% if record.feedback == "pending" %}
                         <form method="post" action="{% url 'submit_feedback' record.id %}" style="display:flex; gap:5px;">
                             {% csrf_token %}

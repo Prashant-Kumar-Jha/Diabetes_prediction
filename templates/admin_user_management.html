@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>User Management - Admin Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- ✅ For mobile responsiveness -->
     <style>
         body {
             background: linear-gradient(to right, #004e92, #000428);
@@ -13,23 +14,27 @@
             text-align: center;
             margin-bottom: 30px;
         }
+
         table {
-            width: 80%;
-            margin: 0 auto;
+            width: 100%;
             border-collapse: collapse;
             background-color: rgba(255,255,255,0.05);
         }
+
         th, td {
             padding: 10px;
             text-align: center;
             border-bottom: 1px solid rgba(255,255,255,0.2);
         }
+
         th {
             background-color: rgba(255,255,255,0.15);
         }
+
         form {
             margin: 0;
         }
+
         .btn-delete {
             background-color: #f44336;
             border: none;
@@ -37,6 +42,42 @@
             padding: 5px 12px;
             border-radius: 5px;
             cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            table, thead, tbody, th, td, tr {
+                display: block;
+                width: 100%;
+            }
+
+            thead {
+                display: none;
+            }
+
+            tr {
+                margin-bottom: 15px;
+                border-bottom: 2px solid rgba(255,255,255,0.3);
+                padding: 10px 0;
+            }
+
+            td {
+                text-align: right;
+                padding-left: 50%;
+                position: relative;
+                border: none;
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+            }
+
+            td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 15px;
+                width: 45%;
+                padding-right: 10px;
+                font-weight: bold;
+                text-align: left;
+                color: #ffcc00;
+            }
         }
     </style>
 </head>
@@ -55,11 +96,11 @@
         <tbody>
         {% for user in users %}
             <tr>
-                <td>{{ user.username }}</td>
-                <td>{{ user.is_staff }}</td>
-                <td>{{ user.is_superuser }}</td>
-                <td>{{ user.date_joined }}</td>
-                <td>
+                <td data-label="Username">{{ user.username }}</td>
+                <td data-label="Is Staff">{{ user.is_staff }}</td>
+                <td data-label="Is Superuser">{{ user.is_superuser }}</td>
+                <td data-label="Date Joined">{{ user.date_joined }}</td>
+                <td data-label="Action">
                     {% if not user.is_superuser %}
                     <form method="post" action="{% url 'delete_user' user.id %}">
                         {% csrf_token %}
