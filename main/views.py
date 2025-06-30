@@ -12,13 +12,22 @@ from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth.models import User
 
 # Load ML model
-MODEL_PATH = r"D:\python\Scripts\Diabetes_prediction\diabetes_model_clean.pkl"
+import os
+import joblib
+import traceback
+from django.conf import settings
+
+# ✅ Correct platform-independent path
+MODEL_PATH = os.path.join(settings.BASE_DIR, 'diabetes_model_clean.pkl')
+print("Model path used:", MODEL_PATH)
+
 try:
     model = joblib.load(MODEL_PATH)
 except Exception as e:
     print("Model failed to load:", e)
     traceback.print_exc()
     model = None
+
 
 def home(request):
     if not request.user.is_authenticated:
