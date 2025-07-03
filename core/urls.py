@@ -18,5 +18,12 @@ urlpatterns = [
     path('adminportal/users/', views.admin_user_management, name='admin_user_management'),
     path('adminportal/delete_user/<int:user_id>/', views.delete_user, name='delete_user'),
     path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
+    path('history/download_excel/', views.download_excel, name='download_excel'),
+    path('history/download_pdf/', views.download_pdf, name='download_pdf'),
+    path('delete/<int:record_id>/', views.delete_record, name='delete_record'),
+    path('bmi/', views.bmi_calculator, name='bmi_calculator'),
 ]
+
+
+
 

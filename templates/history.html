@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>History - Diabetes Predictor</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- ✅ Mobile support -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
@@ -83,6 +83,57 @@
             color: white;
         }
 
+        .download-buttons .download-btn {
+            display: inline-block;
+            margin: 0 10px;
+            padding: 12px 24px;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 12px rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .download-btn.excel {
+            background: #28a745;
+            color: #fff;
+        }
+
+        .download-btn.pdf {
+            background: #dc3545;
+            color: #fff;
+        }
+
+        .download-btn::after {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 10%, transparent 10.01%);
+            background-size: 10px 10px;
+            animation: shimmer 2s linear infinite;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .download-btn:hover::after {
+            opacity: 0.4;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(100%, 100%); }
+        }
+
+        .download-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 18px rgba(255, 255, 255, 0.3);
+        }
+
         @media (max-width: 768px) {
             .charts-grid {
                 grid-template-columns: 1fr;
@@ -140,6 +191,11 @@
         ">⬅️ Back to Home</a>
     </div>
 
+    <div class="download-buttons" style="text-align:center; margin-bottom: 30px;">
+        <a href="{% url 'download_excel' %}" class="download-btn excel">⬇️ Excel</a>
+        <a href="{% url 'download_pdf' %}" class="download-btn pdf">⬇️ PDF</a>
+    </div>
+
     <div class="charts-grid">
         <div class="chart-box">
             <h3 style="color:#fff;">Pie Chart - Prediction Summary</h3>
@@ -178,6 +234,7 @@
             <th>Result</th>
             <th>Time</th>
             <th>Feedback</th>
+            <th>Delete</th>
         </tr>
         </thead>
         <tbody>
@@ -193,11 +250,22 @@
                 <td data-label="BMI">{{ record.bmi }}</td>
                 <td data-label="DPF">{{ record.dpf }}</td>
                 <td data-label="Age">{{ record.age }}</td>
-                <td data-label="Result">{{ record.result }}</td>
+                <td data-label="Result">
+    {{ record.result }}
+    <br>
+    <small style="font-size: 13px; color: #ffdd57;">
+        {% if record.glucose > 125 %} High Glucose ({{ record.glucose }}){% endif %}
+        {% if record.bmi > 30 %} | High BMI ({{ record.bmi }}){% endif %}
+        {% if record.age > 45 %} | Age Risk ({{ record.age }}){% endif %}
+        {% if record.bloodpressure > 80 %} | High BP ({{ record.bloodpressure }}){% endif %}
+        {% if record.dpf > 0.5 %} | High DPF ({{ record.dpf }}){% endif %}
+    </small>
+</td>
+
                 <td data-label="Time">{{ record.timestamp }}</td>
                 <td data-label="Feedback">
                     {% if record.feedback == "pending" %}
-                        <form method="post" action="{% url 'submit_feedback' record.id %}" style="display:flex; gap:5px;">
+                        <form method="post" action="{% url 'submit_feedback' record.id %}" style="display:flex; gap:5px; justify-content:center; flex-wrap: wrap;">
                             {% csrf_token %}
                             <button type="submit" name="feedback" value="correct" class="feedback-btn feedback-correct">✅</button>
                             <button type="submit" name="feedback" value="incorrect" class="feedback-btn feedback-incorrect">❌</button>
@@ -207,6 +275,12 @@
                     {% elif record.feedback == "incorrect" %}
                         <span style="color:#f44336;">❗ Incorrect</span>
                     {% endif %}
+                </td>
+                <td data-label="Delete">
+                    <form method="post" action="{% url 'delete_record' record.id %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="feedback-btn feedback-incorrect" style="background-color:#b71c1c;">🗑️</button>
+                    </form>
                 </td>
             </tr>
         {% endfor %}

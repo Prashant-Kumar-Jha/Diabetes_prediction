@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Prediction Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 10pt;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            word-wrap: break-word;
+        }
+        th, td {
+            border: 1px solid #333;
+            padding: 6px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        ul {
+            margin: 0;
+            padding-left: 15px;
+        }
+        li {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <h2>Diabetes Prediction Report</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Patient Name</th>
+                <th>Patient ID</th>
+                <th>Pregnancies</th>
+                <th>Glucose</th>
+                <th>Blood Pressure</th>
+                <th>Skin Thickness</th>
+                <th>Insulin</th>
+                <th>BMI</th>
+                <th>DPF</th>
+                <th>Age</th>
+                <th>Result</th>
+                <th>Feedback</th>
+                <th>Time</th>
+                <th>Explanation</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in records %}
+            <tr>
+                <td>{{ record.patient_name }}</td>
+                <td>{{ record.patient_id }}</td>
+                <td>{{ record.pregnancies }}</td>
+                <td>{{ record.glucose }}</td>
+                <td>{{ record.bloodpressure }}</td>
+                <td>{{ record.skinthickness }}</td>
+                <td>{{ record.insulin }}</td>
+                <td>{{ record.bmi }}</td>
+                <td>{{ record.dpf }}</td>
+                <td>{{ record.age }}</td>
+                <td>{{ record.result }}</td>
+                <td>{{ record.feedback|default:"Pending" }}</td>
+                <td>{{ record.timestamp|date:"Y-m-d H:i" }}</td>
+                <td>
+                    <ul>
+                        {% for item in record.explanation %}
+                            <li>{{ item }}</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

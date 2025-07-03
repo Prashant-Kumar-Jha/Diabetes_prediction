@@ -1,0 +1,203 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Home</title>
+  <style>
+    :root {
+      --btn-gradient: linear-gradient(45deg, #00c6ff, #0072ff);
+      --btn-bmi: linear-gradient(45deg, #7f00ff, #e100ff);
+      --btn-admin: linear-gradient(45deg, #f7971e, #ffd200);
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to right, #141e30, #243b55); /* default */
+      background-attachment: fixed;
+      background-size: cover;
+      font-family: 'Segoe UI', sans-serif;
+      color: #ffffff;
+      transition: background 0.5s ease, color 0.5s ease;
+    }
+
+    .container {
+      text-align: center;
+      padding: 50px 20px;
+    }
+
+    h1 {
+      font-size: 2.8rem;
+      margin-top: 120px;
+      background: linear-gradient(to right, #00c6ff, #0072ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    input[type=submit], .admin-btn a {
+      border: none;
+      color: white;
+      padding: 14px 30px;
+      font-size: 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      transition: transform 0.2s;
+    }
+
+    input[type=submit]:hover, .admin-btn a:hover {
+      transform: scale(1.05);
+    }
+
+    form[action="/predict"] input[type=submit] {
+      background: var(--btn-gradient);
+    }
+
+    form[action="{% url 'bmi_calculator' %}"] input[type=submit] {
+      background: var(--btn-bmi);
+    }
+
+    .admin-btn a {
+      background: var(--btn-admin);
+      display: inline-block;
+      text-decoration: none;
+      color: #000;
+      font-weight: bold;
+    }
+
+    .logout-form {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+    }
+
+    .logout-form button {
+      background-color: #ff4d4d;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      font-size: 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .logout-form button:hover {
+      background-color: #e60000;
+    }
+
+    .color-palette {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      display: flex;
+      gap: 10px;
+      z-index: 999;
+    }
+
+    .color-option {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid white;
+      cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2rem;
+        margin-top: 100px;
+      }
+
+      input[type=submit] {
+        font-size: 16px;
+        padding: 12px 24px;
+      }
+
+      .logout-form button {
+        padding: 8px 12px;
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Color Palette -->
+  <div class="color-palette">
+    <span class="color-option" data-theme="dark" style="background: #243b55;"></span>
+    <span class="color-option" data-theme="light" style="background: #f1f8e9;"></span>
+    <span class="color-option" data-theme="purple" style="background: #7f00ff;"></span>
+    <span class="color-option" data-theme="blue" style="background: #0072ff;"></span>
+  </div>
+
+  {% if user.is_authenticated %}
+  <form method="post" action="{% url 'logout' %}" class="logout-form">
+    {% csrf_token %}
+    <button type="submit">Logout</button>
+  </form>
+  {% endif %}
+
+  <div class="container">
+    <h1>WELCOME TO DIABETES PREDICTION SYSTEM</h1>
+
+    <form action="/predict">
+      <input type="submit" value="🔍 Let's Get Started">
+    </form>
+
+    <form action="{% url 'bmi_calculator' %}">
+      <input type="submit" value="🧮 BMI Calculator">
+    </form>
+
+    {% if request.user.is_staff or request.user.is_superuser %}
+    <div class="admin-btn">
+      <a href="{% url 'admin_portal' %}">🛠 Admin Portal</a>
+    </div>
+    {% endif %}
+  </div>
+
+  <script>
+    const themeMap = {
+      dark: {
+        background: "linear-gradient(to right, #141e30, #243b55)",
+        textColor: "#ffffff"
+      },
+      light: {
+        background: "linear-gradient(to right, #e0f7fa, #f1f8e9)",
+        textColor: "#222222"
+      },
+      purple: {
+        background: "linear-gradient(to right, #7f00ff, #e100ff)",
+        textColor: "#ffffff"
+      },
+      blue: {
+        background: "linear-gradient(to right, #00c6ff, #0072ff)",
+        textColor: "#ffffff"
+      }
+    };
+
+    function applyTheme(theme) {
+      const body = document.body;
+      const selected = themeMap[theme] || themeMap["dark"];
+      body.style.background = selected.background;
+      body.style.color = selected.textColor;
+      localStorage.setItem("customTheme", theme);
+    }
+
+    // Apply saved theme
+    const savedTheme = localStorage.getItem("customTheme") || "dark";
+    applyTheme(savedTheme);
+
+    // Handle palette click
+    document.querySelectorAll('.color-option').forEach(button => {
+      button.addEventListener('click', () => {
+        const theme = button.getAttribute('data-theme');
+        applyTheme(theme);
+      });
+    });
+  </script>
+</body>
+</html>

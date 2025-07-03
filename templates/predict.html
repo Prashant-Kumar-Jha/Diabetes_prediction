@@ -1,4 +1,4 @@
-{% load static %}
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -34,7 +34,24 @@
         h1 {
             text-align: center;
             font-size: 32px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
+        }
+
+        /* Django messages */
+        .messages {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 15px;
+        }
+
+        .messages li {
+            background-color: #dff0d8;
+            color: #3c763d;
+            border: 1px solid #3c763d;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
         }
 
         form {
@@ -43,16 +60,35 @@
             align-items: center;
         }
 
+        form div {
+            width: 100%;
+            margin-bottom: 12px;
+        }
+
         input[type="text"],
         input[type="number"],
-        input[type="submit"] {
+        input[type="submit"],
+        input[type="reset"] {
             width: 100%;
             height: 45px;
-            margin-bottom: 15px;
             padding: 10px;
+            margin-bottom: 15px;
             border-radius: 8px;
             border: none;
             font-size: 16px;
+        }
+
+        form input[type="text"],
+        form input[type="number"] {
+            background-color: #e0f4ff;
+            border: 2px solid #4dc3ff;
+        }
+
+        form small {
+            color: #d0f0ff;
+            font-size: 13px;
+            margin-top: 3px;
+            display: block;
         }
 
         input[type="submit"] {
@@ -65,6 +101,13 @@
 
         input[type="submit"]:hover {
             background-color: #38a4d6;
+        }
+
+        input[type="reset"] {
+            background-color: #cccccc;
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
         }
 
         .result {
@@ -97,7 +140,8 @@
 
             input[type="text"],
             input[type="number"],
-            input[type="submit"] {
+            input[type="submit"],
+            input[type="reset"] {
                 font-size: 14px;
             }
 
@@ -105,25 +149,115 @@
                 padding: 20px 15px;
             }
         }
+
+        .instructions {
+            background-color: rgba(255,255,255,0.15);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .instructions h3 {
+            margin-top: 0;
+            color: #d0f0ff;
+        }
+
+        .instructions ul {
+            padding-left: 20px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #d0f0ff;
+        }
+
+        .footer-note {
+            font-size: 12px;
+            text-align: center;
+            margin-top: 20px;
+            color: #d0f0ff;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Diabetes Prediction</h1>
 
+        <!-- Django Success Message -->
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <!-- Instructions -->
+        <div class="instructions">
+            <h3>Instructions</h3>
+            <ul>
+                <li>All fields marked with * are required.</li>
+                <li>Enter numeric values only for medical measurements.</li>
+                <li>Use realistic values (e.g., Glucose between 70–200, BMI between 15–40).</li>
+                <li>Prediction is based on a statistical model; consult a doctor for real diagnosis.</li>
+                <li>You can view all your predictions by clicking “View Prediction History.”</li>
+            </ul>
+        </div>
+
+        <!-- Form -->
         <form method="post">
             {% csrf_token %}
-            <input type="text" name="patient_name" placeholder="Patient Name" required>
-            <input type="text" name="patient_id" placeholder="Patient ID (optional)">
-            <input type="number" step="any" name="pregnancies" placeholder="Pregnancies" required>
-            <input type="number" step="any" name="glucose" placeholder="Glucose Level" required>
-            <input type="number" step="any" name="bloodpressure" placeholder="Blood Pressure" required>
-            <input type="number" step="any" name="skinthickness" placeholder="Skin Thickness" required>
-            <input type="number" step="any" name="insulin" placeholder="Insulin" required>
-            <input type="number" step="any" name="bmi" placeholder="BMI" required>
-            <input type="number" step="any" name="dpf" placeholder="Diabetes Pedigree Function" required>
-            <input type="number" step="any" name="age" placeholder="Age" required>
+
+            <div>
+                <input type="text" name="patient_name" placeholder="Patient Name" required>
+                <small>↪ Enter full name (e.g., John Doe)</small>
+            </div>
+
+            <div>
+                <input type="text" name="patient_id" placeholder="Patient ID (optional)">
+                <small>↪ Optional ID (e.g., 12345)</small>
+            </div>
+
+            <div>
+                <input type="number" name="pregnancies" placeholder="Pregnancies" min="0" step="1" value="0" required>
+                <small>↪ Number of pregnancies (0 or more)</small>
+            </div>
+
+            <div>
+                <input type="number" name="glucose" placeholder="Glucose Level" min="0" step="any" value="0" required>
+                <small>↪ Blood glucose level (e.g., 120)</small>
+            </div>
+
+            <div>
+                <input type="number" name="bloodpressure" placeholder="Blood Pressure" min="0" step="any" value="0" required>
+                <small>↪ Blood pressure in mmHg (e.g., 80)</small>
+            </div>
+
+            <div>
+                <input type="number" name="skinthickness" placeholder="Skin Thickness" min="0" step="any" value="0" required>
+                <small>↪ Thickness of skin in mm (e.g., 25)</small>
+            </div>
+
+            <div>
+                <input type="number" name="insulin" placeholder="Insulin" min="0" step="any" value="0" required>
+                <small>↪ Insulin level (e.g., 80)</small>
+            </div>
+
+            <div>
+                <input type="number" name="bmi" placeholder="BMI" min="0" step="0.1" value="0.0" required>
+                <small>↪ Body Mass Index (e.g., 24.5)</small>
+            </div>
+
+            <div>
+                <input type="number" name="dpf" placeholder="Diabetes Pedigree Function" min="0" step="0.01" value="0.00" required>
+                <small>↪ Family diabetes history score (e.g., 0.5)</small>
+            </div>
+
+            <div>
+                <input type="number" name="age" placeholder="Age" min="0" max="120" step="1" value="0" required>
+                <small>↪ Patient's age in years</small>
+            </div>
+
             <input type="submit" value="Predict">
+            <input type="reset" value="Clear">
         </form>
 
         {% if result %}
@@ -133,6 +267,13 @@
         <form action="/history/" class="history-button">
             <input type="submit" value="View Prediction History">
         </form>
+
+        <p class="footer-note">
+            This tool is for educational purposes only and does not replace professional medical advice.
+        </p>
     </div>
 </body>
 </html>
+
+
+
