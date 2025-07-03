@@ -19,29 +19,34 @@ import io
 from collections import Counter
 from django.conf import settings
 
-# Load ML model
+# ---------------------
+# ✅ Lazy-load ML model
+# ---------------------
 MODEL_PATH = os.path.join(settings.BASE_DIR, 'diabetes_model_clean.pkl')
-print("Model path used:", MODEL_PATH)
+model = None
 
-try:
-    model = joblib.load(MODEL_PATH)
-except Exception as e:
-    print("Model failed to load:", e)
-    traceback.print_exc()
-    model = None
-
+def load_model():
+    global model
+    if model is None:
+        try:
+            print("Loading model from:", MODEL_PATH)
+            model = joblib.load(MODEL_PATH)
+        except Exception as e:
+            print("Model failed to load:", e)
+            traceback.print_exc()
+            model = None
 
 def home(request):
     if not request.user.is_authenticated:
         return redirect('login')
     return render(request, 'home.html')
 
-
 @login_required
 def predict(request):
     result = None
     if request.method == 'POST':
         try:
+            load_model()
             if model is None:
                 result = "Model not loaded. Try again later."
             else:
@@ -76,9 +81,6 @@ def predict(request):
             result = f"Error: {str(e)}"
     return render(request, 'predict.html', {'result': result})
 
-
-
-
 @login_required
 @require_POST
 def submit_feedback(request, result_id):
@@ -88,7 +90,6 @@ def submit_feedback(request, result_id):
         record.feedback = feedback
         record.save()
     return redirect('history')
-
 
 def signup(request):
     if request.method == 'POST':
@@ -100,7 +101,6 @@ def signup(request):
         login(request, user)
         return redirect('home')
     return render(request, 'signup.html')
-
 
 def user_login(request):
     if request.method == 'POST':
@@ -114,11 +114,9 @@ def user_login(request):
             return render(request, 'login.html', {'error': 'Invalid credentials'})
     return render(request, 'login.html')
 
-
 def user_logout(request):
     logout(request)
     return redirect('login')
-
 
 @login_required
 def admin_portal(request):
@@ -139,12 +137,10 @@ def admin_portal(request):
         'non_diabetic_count': non_diabetic_count,
     })
 
-
 @staff_member_required
 def admin_user_management(request):
     users = User.objects.all()
     return render(request, 'admin_user_management.html', {'users': users})
-
 
 @staff_member_required
 @csrf_protect
@@ -154,19 +150,14 @@ def delete_user(request, user_id):
         user.delete()
     return redirect('admin_user_management')
 
-
 # --------------------
 # 📤 EXCEL EXPORT VIEW
 # --------------------
-import io
 import xlsxwriter
 from django.http import HttpResponse
-from .models import PredictionRecord
-
 
 def generate_explanation(record):
     risk_factors = []
-
     if record.glucose > 140:
         risk_factors.append("high glucose")
     if record.bmi > 30:
@@ -179,22 +170,17 @@ def generate_explanation(record):
     else:
         return "No major risk factors detected based on input values."
 
-
 def download_excel(request):
     output = io.BytesIO()
-
-    # Create a workbook and worksheet
     workbook = xlsxwriter.Workbook(output, {'in_memory': True})
     worksheet = workbook.add_worksheet("Prediction History")
 
-    # Define header format
     header_format = workbook.add_format({
         'bold': True,
         'bg_color': '#DCE6F1',
         'border': 1
     })
 
-    # Define headers including the new "Explanation" column
     headers = [
         'Patient Name', 'Patient ID', 'Pregnancies', 'Glucose', 'Blood Pressure',
         'Skin Thickness', 'Insulin', 'BMI', 'DPF', 'Age', 'Result', 'Time',
@@ -204,10 +190,8 @@ def download_excel(request):
     for col, header in enumerate(headers):
         worksheet.write(0, col, header, header_format)
 
-    # Fetch all records
     records = PredictionRecord.objects.all()
 
-    # Write data
     for row_idx, record in enumerate(records, start=1):
         explanation = generate_explanation(record)
 
@@ -228,7 +212,6 @@ def download_excel(request):
 
     workbook.close()
 
-    # Return response
     output.seek(0)
     response = HttpResponse(
         output.read(),
@@ -237,20 +220,16 @@ def download_excel(request):
     response['Content-Disposition'] = 'attachment; filename=prediction_history.xlsx'
     return response
 
-
-
 # --------------------
 # 🧾 PDF EXPORT VIEW
 # --------------------
 def shorten(text, max_length=20):
     return (text[:max_length] + '...') if len(text) > max_length else text
 
-
 @staff_member_required
 def download_pdf(request):
     records = PredictionRecord.objects.all().order_by('-timestamp')
 
-    # Optional truncation for layout
     for record in records:
         record.patient_name = shorten(record.patient_name, 20)
         record.patient_id = shorten(record.patient_id, 15)
@@ -270,10 +249,6 @@ def download_pdf(request):
     response.write(result.getvalue())
     return response
 
-from django.shortcuts import get_object_or_404, redirect
-from .models import PredictionRecord
-
-from django.views.decorators.csrf import csrf_protect
 from django.contrib import messages
 
 @csrf_protect
@@ -284,16 +259,13 @@ def delete_record(request, record_id):
         messages.success(request, "Record deleted successfully.")
     return redirect('history')
 
-
 @login_required
 def history(request):
-    # Admins see all, users see their own
     if request.user.is_staff or request.user.is_superuser:
         records = PredictionRecord.objects.all().order_by('-timestamp')
     else:
         records = PredictionRecord.objects.filter(user=request.user).order_by('-timestamp')
 
-    # Explanation logic
     for record in records:
         explanation = []
 
@@ -313,8 +285,6 @@ def history(request):
 
         record.explanation = explanation
 
-    # Chart data
-    from collections import Counter
     result_counts = Counter(record.result for record in records)
     chart_data = {
         'labels': list(result_counts.keys()),
@@ -325,6 +295,7 @@ def history(request):
         'records': records,
         'chart_data': chart_data
     })
+
 from django.views.decorators.csrf import csrf_exempt
 
 @csrf_exempt
@@ -335,7 +306,7 @@ def bmi_calculator(request):
     if request.method == 'POST':
         try:
             weight = float(request.POST.get('weight'))
-            height = float(request.POST.get('height')) / 100  # cm to meters
+            height = float(request.POST.get('height')) / 100
             bmi = weight / (height * height)
             bmi_result = round(bmi, 2)
 
